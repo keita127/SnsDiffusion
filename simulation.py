@@ -106,6 +106,7 @@ class Simulation:
 
     def plot_agents(self, Dg, Dr):
         # エージェントの分布図の描画
+        # gitまじでわからん、、
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
@@ -114,3 +115,4 @@ class Simulation:
         plt.axis("off")
         plt.show()
         self.__play_game(Dg, Dr)
+
