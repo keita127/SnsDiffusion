@@ -47,8 +47,11 @@ class Simulation:
         for index, focal in enumerate(self.agents):
             if index in self.initial_cooperators:
                 focal.strategy = "C"
+                strategy_map.append(focal.strategy)
+                
             else:
                 focal.strategy = "D"
+                strategy_map.append(focal.strategy)
 
     def __count_payoff(self, Dg, Dr):
         # 利得表に基づいて全エージェントが獲得する利得を計算
@@ -78,29 +81,37 @@ class Simulation:
             focal.decide_next_strategy(self.agents)
 
         for focal in self.agents:
-            strategy_map.append(focal.update_strategy())
+            focal_strategy = focal.update_strategy()
+            strategy_map.append(focal_strategy)
     
     def __change_agents_color(self):
         # 戦略によりエージェントの色を変える
 
+        red = 0
+        blue = 0
         for focal in self.agents:
-            color_map.append(focal.change_agents_color())
-            
-
+            focal_color = focal.change_agents_color()
+            color_map.append(focal_color)
+            if(focal_color == 'red'):
+                red += 1
+            else:
+                blue += 1
+        print("red=" + str(red) + " blue=" + str(blue))
+    
     def __play_game(self, Dg, Dr):
 
-        self.__initialize_strategy()
         self.__count_payoff(Dg, Dr)
         self.__update_strategy()
-        self.__change_agents_color()
+        self.__change_agents_color()        
 
     def plot_agents(self, Dg, Dr):
         # エージェントの分布図の描画
-
         self.__choose_initial_cooperators()
-        self.__play_game(Dg, Dr)
-        print(color_map)
+        self.__initialize_strategy()
+        self.__change_agents_color()
         plt.figure()
         nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=100)
         plt.axis("off")
         plt.show()
+        self.__play_game(Dg, Dr)
+        #わからん
