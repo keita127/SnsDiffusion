@@ -114,4 +114,3 @@ class Simulation:
         plt.axis("off")
         plt.show()
         self.__play_game(Dg, Dr)
-        #わからん
