@@ -102,16 +102,18 @@ class Simulation:
 
         self.__count_payoff(Dg, Dr)
         self.__update_strategy()
-        self.__change_agents_color()        
+        self.__change_agents_color()
+        # self.__play_game(Dg, Dr)
 
     def plot_agents(self, Dg, Dr):
         # エージェントの分布図の描画
-        
+        t = 0 
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
-        plt.figure()
-        nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=100)
+        fig = plt.figure(figsize=(30,25), dpi=30)
+        fig.suptitle('t=' + str(t))
+        nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=1000)
         plt.axis("off")
         plt.show()
         self.__play_game(Dg, Dr)
