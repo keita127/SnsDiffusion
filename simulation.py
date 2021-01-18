@@ -9,23 +9,26 @@ from agent import Agent
 class Simulation:
 
     global strategy_map, color_map
+    global network, pos, network_nodes, network_edges
+    global population, edges
+    population = 300
+    edges = 5
     strategy_map = []
     color_map = []
+    network = nx.barabasi_albert_graph(population, edges)
+    pos = nx.spring_layout(network)
     fig = plt.figure(figsize=(30,25), dpi=30)
+    network_nodes = nx.draw_networkx_nodes(network, pos, node_color = color_map)
+    network_edges = nx.draw_networkx_edges(network, pos)
+    
 
     def __init__(self, population, edges):
         self.agents = self.__generate_agents(population, edges)
-        self.initial_cooperators = self.__choose_initial_cooperators() 
+        self.initial_cooperators = self.__choose_initial_cooperators()
 
     def __generate_agents(self, population,edges):
         # エージェントをリストに詰め、隣人エージェントのIDをセットする
-        global network, pos, network_nodes, network_edges
-
-        network = nx.barabasi_albert_graph(population, edges)
-        pos = nx.spring_layout(network)
-        network_nodes = nx.draw_networkx_nodes(network, pos, node_color = color_map)
-        network_edges = nx.draw_networkx_edges(network, pos)
-
+        
         agents = [Agent() for id in range(population)]
         for index, focal in enumerate(agents):
             neighbors_id = list(network[index])
@@ -106,13 +109,14 @@ class Simulation:
         # print(color_map)    
     
     def update(self):
-
+        
+        print(color_map)
         nc = color_map
-        self.network_nodes.set_facecolors(nc)
-        return self.network_nodes,
+        network_nodes.set_facecolors(nc)
+        return network_nodes,
     
     anim = FuncAnimation(fig, update, interval=1000, blit=True)
-
+    
     plt.axis("off")
     plt.show()
 
