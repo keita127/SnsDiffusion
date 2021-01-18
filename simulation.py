@@ -3,27 +3,28 @@ import random as rnd
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from agent import Agent
 
 class Simulation:
 
-    global strategy_map
-    global color_map
+    global strategy_map, color_map
     strategy_map = []
     color_map = []
+    fig = plt.figure(figsize=(30,25), dpi=30)
 
-    def __init__(self, population, average_degree):
-        self.agents = self.__generate_agents(population, average_degree)
+    def __init__(self, population, edges):
+        self.agents = self.__generate_agents(population, edges)
         self.initial_cooperators = self.__choose_initial_cooperators() 
 
     def __generate_agents(self, population,edges):
         # エージェントをリストに詰め、隣人エージェントのIDをセットする
+        global network, pos, network_nodes, network_edges
 
-        global rearange_edges
-        global network
-        global pos
         network = nx.barabasi_albert_graph(population, edges)
         pos = nx.spring_layout(network)
+        network_nodes = nx.draw_networkx_nodes(network, pos, node_color = color_map)
+        network_edges = nx.draw_networkx_edges(network, pos)
 
         agents = [Agent() for id in range(population)]
         for index, focal in enumerate(agents):
@@ -84,11 +85,14 @@ class Simulation:
             focal_strategy = focal.update_strategy()
             strategy_map.append(focal_strategy)
     
+        # print(strategy_map)
+
     def __change_agents_color(self):
         # 戦略によりエージェントの色を変える
 
         red = 0
         blue = 0
+
         for focal in self.agents:
             focal_color = focal.change_agents_color()
             color_map.append(focal_color)
@@ -96,25 +100,31 @@ class Simulation:
                 red += 1
             else:
                 blue += 1
+
         print("red=" + str(red) + " blue=" + str(blue))
+        
+        # print(color_map)    
     
-    def __play_game(self, Dg, Dr):
+    def update(self):
 
-        self.__count_payoff(Dg, Dr)
-        self.__update_strategy()
-        self.__change_agents_color()
-        # self.__play_game(Dg, Dr)
+        nc = color_map
+        self.network_nodes.set_facecolors(nc)
+        return self.network_nodes,
+    
+    anim = FuncAnimation(fig, update, interval=1000, blit=True)
 
-    def plot_agents(self, Dg, Dr):
-        # エージェントの分布図の描画
-        t = 0 
+    plt.axis("off")
+    plt.show()
+
+    def play_game(self, Dg, Dr):
+
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
-        fig = plt.figure(figsize=(30,25), dpi=30)
-        fig.suptitle('t=' + str(t))
-        nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=1000)
-        plt.axis("off")
-        plt.show()
-        self.__play_game(Dg, Dr)
+        self.update()
+        self.__count_payoff(Dg, Dr)
+        self.__update_strategy()
+        self.__change_agents_color()
+
+    
 
