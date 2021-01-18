@@ -22,9 +22,11 @@ class Simulation:
     network_edges = nx.draw_networkx_edges(network, pos)
     
 
-    def __init__(self, population, edges):
+    def __init__(self, population, edges, Dg, Dr):
         self.agents = self.__generate_agents(population, edges)
         self.initial_cooperators = self.__choose_initial_cooperators()
+        self.Dg = Dg
+        self.Dr = Dr
 
     def __generate_agents(self, population,edges):
         # エージェントをリストに詰め、隣人エージェントのIDをセットする
@@ -88,7 +90,6 @@ class Simulation:
             focal_strategy = focal.update_strategy()
             strategy_map.append(focal_strategy)
     
-        # print(strategy_map)
 
     def __change_agents_color(self):
         # 戦略によりエージェントの色を変える
@@ -105,30 +106,31 @@ class Simulation:
                 blue += 1
 
         print("red=" + str(red) + " blue=" + str(blue))
-        
-        # print(color_map)    
-    
-    def update(self):
-        
-        print(color_map)
-        nc = color_map
-        network_nodes.set_facecolors(nc)
-        return network_nodes,
-    
-    anim = FuncAnimation(fig, update, interval=1000, blit=True)
-    
-    plt.axis("off")
-    plt.show()
 
-    def play_game(self, Dg, Dr):
+        return color_map
+    
+    def play_game(self):
 
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
         self.update()
-        self.__count_payoff(Dg, Dr)
+        self.__count_payoff(self.Dg, self.Dr)
         self.__update_strategy()
         self.__change_agents_color()
+
+    def update(self):
+        
+        # print("col" + str(color_map))
+        nc = color_map
+        network_nodes.set_facecolors(nc)
+        return network_nodes,
+
+    anim = FuncAnimation(fig, play_game, interval=1000, blit=True)
+    
+    plt.axis("off")
+    plt.show()
+
 
     
 
