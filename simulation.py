@@ -115,10 +115,11 @@ class Simulation:
         self.__change_agents_color()
         
         for i in range(10):
-            fig = plt.figure(figsize=(30,25), dpi=30)
-            nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=1000)
+            fig = plt.figure(figsize=(40,35), dpi=30)
+            nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=2000)
             plt.axis("off")
-            fig.savefig("fig_" + str(i) + ".png",dpi=100)
+            plt.title("t=" + str(i), fontsize=50)
+            fig.savefig("fig_" + str(i) + ".png",dpi=30)
             # plt.show()
             self.__play_game(Dg, Dr)
             
