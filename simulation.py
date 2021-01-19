@@ -89,6 +89,8 @@ class Simulation:
 
         red = 0
         blue = 0
+        
+        color_map.clear()
         for focal in self.agents:
             focal_color = focal.change_agents_color()
             color_map.append(focal_color)
@@ -96,13 +98,14 @@ class Simulation:
                 red += 1
             else:
                 blue += 1
+        
         print("red=" + str(red) + " blue=" + str(blue))
     
     def __play_game(self, Dg, Dr):
 
         self.__count_payoff(Dg, Dr)
         self.__update_strategy()
-        self.__change_agents_color()        
+        self.__change_agents_color()
 
     def plot_agents(self, Dg, Dr):
         # エージェントの分布図の描画
@@ -110,9 +113,13 @@ class Simulation:
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
-        plt.figure()
-        nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=100)
-        plt.axis("off")
-        plt.show()
-        self.__play_game(Dg, Dr)
+        
+        for i in range(10):
+            fig = plt.figure(figsize=(30,25), dpi=30)
+            nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=1000)
+            plt.axis("off")
+            fig.savefig("fig_" + str(i) + ".png",dpi=100)
+            # plt.show()
+            self.__play_game(Dg, Dr)
+            
 
