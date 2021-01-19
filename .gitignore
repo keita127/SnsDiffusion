@@ -5,5 +5,5 @@ plot_example.py
 plot_example.py
 change_color.py
 some.py
-* .png
-* .gif
+*.png
+*.gif
