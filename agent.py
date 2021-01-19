@@ -1,5 +1,4 @@
 import random as rnd
-
 from matplotlib.pyplot import colorbar
 import numpy as np
 
