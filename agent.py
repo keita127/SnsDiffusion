@@ -28,9 +28,9 @@ class Agent:
         return self.strategy
         
     def change_agents_color(self):
-        if self.strategy == 'C':
-            return "blue"
-        elif self.strategy == "D":
+        if self.strategy == 'known':
             return "red"
+        elif self.strategy == "unknown":
+            return "None"
         
         
