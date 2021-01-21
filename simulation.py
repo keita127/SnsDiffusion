@@ -2,6 +2,7 @@ import numpy as np
 import random as rnd
 import networkx as nx
 import pandas as pd
+import os
 import matplotlib.pyplot as plt
 from agent import Agent
 
@@ -37,7 +38,7 @@ class Simulation:
         #最初のゲームでC戦略を取るエージェントをランダムに選ぶ
 
         population = len(self.agents)
-        initial_cooperators = rnd.sample(range(population), k = int(population/2))
+        initial_cooperators = rnd.sample(range(population), k = 1)
 
         return initial_cooperators
 
@@ -46,32 +47,32 @@ class Simulation:
 
         for index, focal in enumerate(self.agents):
             if index in self.initial_cooperators:
-                focal.strategy = "C"
+                focal.strategy = "known"
                 strategy_map.append(focal.strategy)
                 
             else:
-                focal.strategy = "D"
+                focal.strategy = "unknown"
                 strategy_map.append(focal.strategy)
 
-    def __count_payoff(self, Dg, Dr):
+    def __count_payoff(self, I):
         # 利得表に基づいて全エージェントが獲得する利得を計算
 
-        R = 1       # Reward
-        S = -Dr     # Sucker
-        T = 1+Dg    # Temptation
+        R = 1+I       # Reward
+        S = I/2     # Sucker
+        T = 1+I/2    # Temptation
         P = 0       # Punishment
 
         for focal in self.agents:
             focal.point = 0.0
             for nb_id in focal.neighbors_id:
                 neighbor = self.agents[nb_id]
-                if focal.strategy == "C" and neighbor.strategy == "C":    
-                    focal.point += R 
-                elif focal.strategy == "C" and neighbor.strategy == "D":   
+                if focal.strategy == "known" and neighbor.strategy == "known":    
+                    focal.point += R
+                elif focal.strategy == "known" and neighbor.strategy == "unknown":   
                     focal.point += S
-                elif focal.strategy == "D" and neighbor.strategy == "C":   
+                elif focal.strategy == "unknown" and neighbor.strategy == "known":   
                     focal.point += T
-                elif focal.strategy == "D" and neighbor.strategy == "D":  
+                elif focal.strategy == "unknown" and neighbor.strategy == "unknown":  
                     focal.point += P
 
     def __update_strategy(self):
@@ -87,40 +88,51 @@ class Simulation:
     def __change_agents_color(self):
         # 戦略によりエージェントの色を変える
 
-        red = 0
-        blue = 0
-        
+        known = 0
+        unknown = 0
         color_map.clear()
+
         for focal in self.agents:
             focal_color = focal.change_agents_color()
             color_map.append(focal_color)
             if(focal_color == 'red'):
-                red += 1
+                known += 1
             else:
-                blue += 1
-        
-        print("red=" + str(red) + " blue=" + str(blue))
+                unknown += 1
+        print("known=" + str(known) + " unknown=" + str(unknown))
     
-    def __play_game(self, Dg, Dr):
+    def __play_game(self, I):
 
-        self.__count_payoff(Dg, Dr)
+        self.__count_payoff(I)
         self.__update_strategy()
         self.__change_agents_color()
 
-    def plot_agents(self, Dg, Dr):
+    def plot_agents(self, I, population):
         # エージェントの分布図の描画
         
+        os.makedirs("images/images_" + str(I), exist_ok=True)
+
         self.__choose_initial_cooperators()
         self.__initialize_strategy()
         self.__change_agents_color()
-        
-        for i in range(10):
+
+        break_map = ["None"] * population
+
+        def for_sort(i):
+            if( i < 10 ) :
+                return ("0" + str(i))
+            else :
+                return str(i)
+
+        for i in range(1000):
+            counter = 0
             fig = plt.figure(figsize=(40,35), dpi=30)
             nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=2000)
             plt.axis("off")
             plt.title("t=" + str(i), fontsize=50)
-            fig.savefig("fig_" + str(i) + ".png",dpi=30)
-            # plt.show()
-            self.__play_game(Dg, Dr)
-            
+            fig.savefig("images/images_" + str(I) + "/fig_" + for_sort(i) + ".png",dpi=30)
+            for j in range(population) :
+                if(color_map[j] == "red") : counter += 1 
+            if(color_map == break_map or counter >= 450) : break
+            self.__play_game(I)
 
