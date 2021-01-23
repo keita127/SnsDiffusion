@@ -124,12 +124,12 @@ class Simulation:
             else :
                 return str(i)
 
-        for i in range(1000):
+        for i in range(100):
             counter = 0
             fig = plt.figure(figsize=(40,35), dpi=30)
             nx.draw_networkx(network, pos, node_color=color_map, with_labels=False, node_shape='.', node_size=2000)
             plt.axis("off")
-            plt.title("t=" + str(i), fontsize=50)
+            plt.title("I=" + str(I) + " , t=" + str(i), fontsize=50)
             fig.savefig("images/images_" + str(I) + "/fig_" + for_sort(i) + ".png",dpi=30)
             for j in range(population) :
                 if(color_map[j] == "red") : counter += 1 
