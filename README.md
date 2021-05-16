@@ -4,7 +4,7 @@
 Simulate the spread of information on SNS.
 
 ## Using
-the Barabási-Albert model
+the Barabási-Albert model<br>
 Networkx
 
 ## Reference
